@@ -1,5 +1,5 @@
 import React from 'react';
-import { Eye, Bot, CheckCircle, Package } from 'lucide-react';
+import { Eye, Bot, Check } from 'lucide-react';
 
 export default function ProductCard({ product, onSelectProduct, onAskAI }) {
   const getBadgeClass = (type) => {
@@ -13,9 +13,20 @@ export default function ProductCard({ product, onSelectProduct, onAskAI }) {
     }
   };
 
+  const getVehicleLabel = (type) => {
+    switch (type) {
+      case 'auto':
+        return 'Auto';
+      case 'moto':
+        return 'Moto';
+      default:
+        return 'Universal';
+    }
+  };
+
   return (
     <div className="product-card">
-      {/* Card Header & Badges */}
+      {/* Card Media */}
       <div className="card-media-wrapper">
         <img
           src={product.image_url}
@@ -28,13 +39,11 @@ export default function ProductCard({ product, onSelectProduct, onAskAI }) {
         />
         <div className="badges-overlay">
           <span className={`badge ${getBadgeClass(product.vehicle_type)}`}>
-            {product.vehicle_type === 'auto' && '🚗 Auto'}
-            {product.vehicle_type === 'moto' && '🏍️ Moto'}
-            {product.vehicle_type === 'universal' && '⚙️ Universal'}
+            {getVehicleLabel(product.vehicle_type)}
           </span>
           {product.highlight && (
             <span className="badge badge-highlight">
-              ⭐ {product.highlight}
+              {product.highlight.replace(/[\uD83C-\uDBFF\uDC00-\uDFFF]/g, '').trim()}
             </span>
           )}
         </div>
@@ -56,8 +65,8 @@ export default function ProductCard({ product, onSelectProduct, onAskAI }) {
             <span className="amount">{Number(product.price).toFixed(2)}</span>
           </div>
           <div className="stock-box">
-            <CheckCircle size={13} className="text-emerald" />
-            <span>{product.stock ?? 15} disponibles</span>
+            <Check size={12} color="#22c55e" />
+            <span>{product.stock ?? 15} unid.</span>
           </div>
         </div>
 
@@ -67,16 +76,16 @@ export default function ProductCard({ product, onSelectProduct, onAskAI }) {
             className="action-btn-secondary"
             onClick={() => onSelectProduct(product)}
           >
-            <Eye size={15} />
-            <span>Ficha Técnica</span>
+            <Eye size={14} />
+            <span>Ficha</span>
           </button>
           <button
             className="action-btn-primary"
             onClick={() => onAskAI(product)}
             title="Preguntar a RinoBot sobre compatibilidad"
           >
-            <Bot size={15} />
-            <span>Consultar IA</span>
+            <Bot size={14} />
+            <span>Consultar</span>
           </button>
         </div>
       </div>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Bot, MessageSquare, X, ChevronUp, Sparkles, Send } from 'lucide-react';
+import { X, Send } from 'lucide-react';
 import { sendChatMessage } from '../services/difyService';
+import rhinoLogo from '../assets/logo_white.png';
 
 export default function FloatingChatWidget({ onOpenFullChat }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -8,7 +9,7 @@ export default function FloatingChatWidget({ onOpenFullChat }) {
   const [quickMessages, setQuickMessages] = useState([
     {
       role: 'bot',
-      text: '¡Hola! Soy **RinoBot**. Si tienes dudas sobre qué repuesto o aceite necesita tu auto o moto, pregúntame aquí.',
+      text: 'Hola, soy RinoBot. Si tienes dudas sobre compatibilidad o stock de repuestos, consúltame aquí.',
     },
   ]);
   const [isTyping, setIsTyping] = useState(false);
@@ -28,7 +29,7 @@ export default function FloatingChatWidget({ onOpenFullChat }) {
     } catch (err) {
       setQuickMessages((prev) => [
         ...prev,
-        { role: 'bot', text: '⚠️ No pude procesar tu consulta en este momento.' },
+        { role: 'bot', text: 'No fue posible conectar con el asistente en este momento.' },
       ]);
     } finally {
       setIsTyping(false);
@@ -39,11 +40,10 @@ export default function FloatingChatWidget({ onOpenFullChat }) {
     <div className="floating-widget-wrapper">
       {/* Floating Popup Window */}
       {isOpen && (
-        <div className="floating-chat-popup glass-panel animate-slide-up">
+        <div className="floating-chat-popup animate-slide-up">
           <div className="floating-header">
             <div className="floating-bot-title">
-              <Bot size={18} color="#3B82F6" />
-              <span>RinoBot IA (Mini Asesor)</span>
+              <span>RinoBot IA</span>
             </div>
             <div className="floating-header-btns">
               <button
@@ -54,13 +54,13 @@ export default function FloatingChatWidget({ onOpenFullChat }) {
                 }}
                 title="Abrir chat completo"
               >
-                Pantalla Completa
+                Expandir
               </button>
               <button
                 className="btn-close-floating"
                 onClick={() => setIsOpen(false)}
               >
-                <X size={16} />
+                <X size={15} />
               </button>
             </div>
           </div>
@@ -76,7 +76,7 @@ export default function FloatingChatWidget({ onOpenFullChat }) {
             ))}
             {isTyping && (
               <div className="floating-msg floating-bot typing-text">
-                RinoBot está escribiendo...
+                Consultando...
               </div>
             )}
           </div>
@@ -84,12 +84,12 @@ export default function FloatingChatWidget({ onOpenFullChat }) {
           <form className="floating-input-form" onSubmit={handleSendQuick}>
             <input
               type="text"
-              placeholder="Consulta rápida de repuesto..."
+              placeholder="Consulta técnica..."
               value={quickInput}
               onChange={(e) => setQuickInput(e.target.value)}
             />
             <button type="submit" disabled={isTyping || !quickInput.trim()}>
-              <Send size={14} />
+              <Send size={13} />
             </button>
           </form>
         </div>
@@ -99,13 +99,12 @@ export default function FloatingChatWidget({ onOpenFullChat }) {
       <button
         className="floating-toggle-btn"
         onClick={() => setIsOpen(!isOpen)}
-        title="Consultar Asistente IA"
+        aria-label="Abrir asistente de Grupo Rino"
       >
         <div className="floating-btn-content">
-          <Bot size={22} color="#FFFFFF" />
-          <span className="floating-btn-text">RinoBot IA</span>
+          <img src={rhinoLogo} alt="Logo Rino" className="floating-btn-logo" />
+          <span className="floating-btn-text">RinoBot</span>
         </div>
-        <span className="pulse-dot floating-dot"></span>
       </button>
     </div>
   );

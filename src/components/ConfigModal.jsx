@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Key, Server, Save, CheckCircle2, ShieldAlert } from 'lucide-react';
+import { X, Key, Server, Save, Check } from 'lucide-react';
 import { getDifyConfig, setDifyConfig } from '../services/difyService';
 
 export default function ConfigModal({ onClose }) {
@@ -23,18 +23,18 @@ export default function ConfigModal({ onClose }) {
       <div className="modal-content config-modal-card animate-slide-up" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <div className="modal-title-wrap">
-            <Key size={18} color="#F59E0B" />
-            <h3 style={{ fontSize: '16px', color: '#FFF' }}>Configuración del Agente IA & API</h3>
+            <Key size={16} />
+            <h3 style={{ fontSize: '15px', color: '#FFF', fontWeight: 600 }}>Configuración de API & Agente IA</h3>
           </div>
           <button className="close-btn" onClick={onClose}>
-            <X size={18} />
+            <X size={16} />
           </button>
         </div>
 
         <form onSubmit={handleSave} className="config-form">
           <div className="form-group">
             <label className="form-label">
-              <Server size={14} />
+              <Server size={13} />
               <span>Dify API Base URL:</span>
             </label>
             <input
@@ -45,13 +45,13 @@ export default function ConfigModal({ onClose }) {
               placeholder="https://api.dify.ai/v1"
             />
             <span className="form-hint">
-              Endpoint oficial para consultar el Agente RinoBot en Dify Cloud.
+              Endpoint para consultar el Agente RinoBot en Dify Cloud o instancia privada.
             </span>
           </div>
 
           <div className="form-group">
             <label className="form-label">
-              <Key size={14} />
+              <Key size={13} />
               <span>Dify API Key (App Key):</span>
             </label>
             <input
@@ -62,22 +62,21 @@ export default function ConfigModal({ onClose }) {
               placeholder="app-xxxxxxxxxxxxxxxxxxxxxxxx"
             />
             <span className="form-hint">
-              Clave de aplicación generada en la consola de Dify.
+              Clave de aplicación provista por el workspace de Dify.
             </span>
           </div>
 
           <div className="guardrail-note-box">
-            <ShieldAlert size={16} color="#3B82F6" />
             <div>
-              <strong>Políticas de Seguridad y Guardrails:</strong>
-              <p>RinoBot tiene activada la restricción de dominio: declinará automáticamente cualquier consulta no vinculada a la app, productos y servicios automotrices de Grupo Rino.</p>
+              <strong>Políticas y Guardrails Activos:</strong>
+              <p>RinoBot restringe las respuestas exclusivamente a consultas de repuestos, lubricantes y servicios logísticos de Grupo Rino.</p>
             </div>
           </div>
 
           {savedSuccess && (
             <div className="saved-badge">
-              <CheckCircle2 size={16} color="#10B981" />
-              <span>Configuración guardada exitosamente</span>
+              <Check size={14} color="#22c55e" />
+              <span>Configuración guardada correctamente</span>
             </div>
           )}
 
@@ -86,8 +85,8 @@ export default function ConfigModal({ onClose }) {
               Cancelar
             </button>
             <button type="submit" className="action-btn-primary">
-              <Save size={16} />
-              <span>Guardar Parámetros</span>
+              <Save size={14} />
+              <span>Guardar</span>
             </button>
           </div>
         </form>

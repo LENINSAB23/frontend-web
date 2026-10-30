@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Search, SlidersHorizontal, Bot, CheckCircle2, Shield, Zap, Sparkles, X } from 'lucide-react';
+import { Search, Bot, Layers, Car, Bike, Wrench, X } from 'lucide-react';
 import ProductCard from './ProductCard';
 
 export default function CatalogView({
@@ -42,32 +42,28 @@ export default function CatalogView({
   return (
     <div className="catalog-view animate-fade-in">
       {/* Hero Section */}
-      <section className="hero-section glass-panel">
+      <section className="hero-section">
         <div className="hero-content">
           <div className="hero-pill">
-            <Sparkles size={14} color="#3B82F6" />
-            <span>Plataforma Oficial de Grupo Rino E.I.R.L. Huánuco</span>
+            <span>Grupo Rino E.I.R.L. • Repuestos Automotrices & Motocicletas</span>
           </div>
           <h1 className="hero-title">
-            Catálogo de Repuestos & <span className="gradient-text">Asistencia IA</span>
+            Catálogo Oficial & <span className="gradient-text">Asistencia Técnica</span>
           </h1>
           <p className="hero-description">
-            Consulta piezas originales, compatibilidad técnica, lubricantes certificados y herramientas para tu vehículo con entrega rápida en Huánuco.
+            Consulta piezas originales, compatibilidad técnica, lubricantes certificados y herramientas automotrices con disponibilidad directa en Huánuco.
           </p>
 
           {/* Quick value badges */}
           <div className="hero-stats-row">
             <div className="stat-item">
-              <Zap size={16} className="text-amber" />
-              <span>Despacho promedio 12-25 min</span>
+              <span>Entrega urbana 12-25 min</span>
             </div>
             <div className="stat-item">
-              <Shield size={16} className="text-blue" />
               <span>Garantía oficial y marcas líderes</span>
             </div>
             <div className="stat-item" onClick={onSwitchToChat} style={{ cursor: 'pointer' }}>
-              <Bot size={16} className="text-cyan" />
-              <span>Asesoría inmediata con RinoBot IA</span>
+              <span>Consultar con RinoBot IA</span>
             </div>
           </div>
         </div>
@@ -76,18 +72,18 @@ export default function CatalogView({
       {/* Filter and Search Bar */}
       <div className="filter-controls-section">
         {/* Search Input Box */}
-        <div className="search-bar-wrapper glass-panel">
-          <Search size={18} className="search-icon" />
+        <div className="search-bar-wrapper">
+          <Search size={16} className="search-icon" />
           <input
             type="text"
             className="search-input"
-            placeholder="Buscar por repuesto, marca (Mobil 1, Motul, Brembo, NGK) o vehículo..."
+            placeholder="Buscar por repuesto, código, marca (Mobil 1, Motul, Brembo, NGK)..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
           {searchTerm && (
             <button className="clear-search-btn" onClick={() => setSearchTerm('')}>
-              <X size={16} />
+              <X size={15} />
             </button>
           )}
         </div>
@@ -98,25 +94,29 @@ export default function CatalogView({
             className={`vehicle-tab-btn ${selectedVehicle === 'all' ? 'active' : ''}`}
             onClick={() => setSelectedVehicle('all')}
           >
-            🚗🏍️ Todos los Vehículos
+            <Layers size={14} />
+            <span>Todos los Vehículos</span>
           </button>
           <button
             className={`vehicle-tab-btn ${selectedVehicle === 'auto' ? 'active' : ''}`}
             onClick={() => setSelectedVehicle('auto')}
           >
-            🚗 Automóviles & SUVs
+            <Car size={14} />
+            <span>Automóviles & SUVs</span>
           </button>
           <button
             className={`vehicle-tab-btn ${selectedVehicle === 'moto' ? 'active' : ''}`}
             onClick={() => setSelectedVehicle('moto')}
           >
-            🏍️ Motocicletas 4T
+            <Bike size={14} />
+            <span>Motocicletas 4T</span>
           </button>
           <button
             className={`vehicle-tab-btn ${selectedVehicle === 'universal' ? 'active' : ''}`}
             onClick={() => setSelectedVehicle('universal')}
           >
-            🔧 Taller & Universal
+            <Wrench size={14} />
+            <span>Taller & Universal</span>
           </button>
         </div>
 
@@ -128,7 +128,7 @@ export default function CatalogView({
               className={`cat-pill-btn ${selectedCategory === cat.id ? 'active' : ''}`}
               onClick={() => setSelectedCategory(cat.id)}
             >
-              <span>{cat.name}</span>
+              <span>{cat.name.replace(/[\uD83C-\uDBFF\uDC00-\uDFFF]/g, '').trim()}</span>
             </button>
           ))}
         </div>
@@ -141,7 +141,7 @@ export default function CatalogView({
         </div>
         {searchTerm && (
           <div className="active-filter-indicator">
-            Filtrando por: <em>"{searchTerm}"</em>
+            Búsqueda: <em>"{searchTerm}"</em>
           </div>
         )}
       </div>
@@ -159,13 +159,13 @@ export default function CatalogView({
           ))}
         </div>
       ) : (
-        <div className="empty-catalog-state glass-panel">
+        <div className="empty-catalog-state">
           <div className="empty-icon-wrap">
-            <Search size={36} color="#64748B" />
+            <Search size={22} />
           </div>
-          <h3>No encontramos repuestos que coincidan</h3>
+          <h3>Sin resultados</h3>
           <p>
-            No hay piezas con el término <strong>"{searchTerm}"</strong> en esta categoría.
+            No se encontraron piezas que coincidan con <strong>"{searchTerm}"</strong>.
           </p>
           <div className="empty-actions">
             <button
@@ -182,8 +182,8 @@ export default function CatalogView({
               className="btn-ask-ai-fallback"
               onClick={() => onAskAI({ name: searchTerm })}
             >
-              <Bot size={16} />
-              <span>Preguntar disponibilidad a RinoBot</span>
+              <Bot size={15} />
+              <span>Consultar disponibilidad en RinoBot</span>
             </button>
           </div>
         </div>

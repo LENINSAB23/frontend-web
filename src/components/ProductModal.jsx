@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Bot, ShieldCheck, CheckCircle2, Tag, Layers } from 'lucide-react';
+import { X, Bot, Check, Layers } from 'lucide-react';
 
 export default function ProductModal({ product, onClose, onAskAI }) {
   if (!product) return null;
@@ -14,7 +14,7 @@ export default function ProductModal({ product, onClose, onAskAI }) {
             <span className="modal-category">{product.category_name}</span>
           </div>
           <button className="close-btn" onClick={onClose}>
-            <X size={20} />
+            <X size={18} />
           </button>
         </div>
 
@@ -33,13 +33,13 @@ export default function ProductModal({ product, onClose, onAskAI }) {
               />
             </div>
             <div className="modal-price-card">
-              <div className="modal-price-label">Precio oficial en Huánuco</div>
+              <div className="modal-price-label">Precio oficial Huánuco</div>
               <div className="modal-price-val">
                 S/ {Number(product.price).toFixed(2)}
               </div>
               <div className="modal-stock-badge">
-                <CheckCircle2 size={14} color="#10B981" />
-                <span>Stock asegurado en almacén ({product.stock ?? 12} un.)</span>
+                <Check size={13} color="#22c55e" />
+                <span>Disponible en almacén ({product.stock ?? 12} unidades)</span>
               </div>
             </div>
           </div>
@@ -53,7 +53,7 @@ export default function ProductModal({ product, onClose, onAskAI }) {
             {product.specifications && product.specifications.length > 0 && (
               <div className="specifications-box">
                 <h4 className="specs-title">
-                  <Layers size={15} />
+                  <Layers size={14} />
                   <span>Especificaciones Técnicas</span>
                 </h4>
                 <div className="specs-grid">
@@ -69,10 +69,9 @@ export default function ProductModal({ product, onClose, onAskAI }) {
 
             {/* Guarantee note */}
             <div className="warranty-note">
-              <ShieldCheck size={18} color="#3B82F6" />
               <div>
-                <strong>Garantía de Autenticidad Grupo Rino:</strong>
-                <p>Todos nuestros repuestos y lubricantes son 100% originales con sello de fábrica y garantía del distribuidor autorizado.</p>
+                <strong>Garantía de Origen Grupo Rino:</strong>
+                <p>Repuesto 100% original con sello de fábrica y trazabilidad directa de distribuidor certificado.</p>
               </div>
             </div>
 
@@ -85,7 +84,7 @@ export default function ProductModal({ product, onClose, onAskAI }) {
                   onClose();
                 }}
               >
-                <Bot size={18} />
+                <Bot size={16} />
                 <span>Consultar Compatibilidad con RinoBot IA</span>
               </button>
             </div>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Bot, Send, RefreshCw, Sparkles, ShieldAlert, Cpu, User, AlertCircle } from 'lucide-react';
-import { sendChatMessage, resetConversation, getDifyConfig } from '../services/difyService';
+import { Send, RefreshCw, User, AlertCircle } from 'lucide-react';
+import { sendChatMessage, resetConversation } from '../services/difyService';
+import rhinoLogo from '../assets/logo_white.png';
 
 export default function AIChatView({ initialPrompt, onClearInitialPrompt }) {
   const [messages, setMessages] = useState([]);
@@ -9,12 +10,12 @@ export default function AIChatView({ initialPrompt, onClearInitialPrompt }) {
   const messagesEndRef = useRef(null);
 
   const quickPrompts = [
-    '🛢️ ¿Qué aceite le hace a mi auto/moto?',
-    '🛑 ¿Tienen pastillas de freno y discos en stock?',
-    '⚡ ¿Qué batería me recomiendan con garantía?',
-    '📦 ¿Cómo rastreo mi pedido con GPS en vivo?',
-    '🔧 ¿Qué funciones tiene el escáner OBD2 Bluetooth?',
-    '🤖 ¿Cómo calculan el tiempo de llegada ETA por IA?',
+    '¿Qué aceite recomiendan para mi vehículo?',
+    '¿Tienen pastillas de freno y discos en stock?',
+    '¿Qué batería recomiendan con garantía oficial?',
+    '¿Cómo rastreo el despacho con GPS en tiempo real?',
+    '¿Qué funciones de diagnóstico tiene el escáner OBD2?',
+    '¿Cómo funciona la estimación de llegada ETA por IA?',
   ];
 
   // Mensaje de bienvenida inicial
@@ -33,10 +34,10 @@ export default function AIChatView({ initialPrompt, onClearInitialPrompt }) {
       id: 'msg_welcome',
       role: 'bot',
       content:
-        '¡Hola! Soy **RinoBot**, el Asistente Técnico Oficial de **Grupo Rino E.I.R.L.** 🚗🏍️\n\n' +
-        'Puedo ayudarte con la compatibilidad de repuestos para tu auto o motocicleta, asesoría de aceites Mobil/Motul, pastillas de freno, baterías Capsa/Yuasa y explicarte el funcionamiento del rastreo satelital GPS de tus pedidos en Huánuco.\n\n' +
-        '🛡️ *Nota de servicio:* Por política de la empresa, respondo exclusivamente consultas sobre la aplicación, catálogo y servicios automotrices de Grupo Rino.\n\n' +
-        '¿En qué repuesto o duda de tu vehículo te puedo orientar?',
+        'Bienvenido al Asistente Técnico Oficial de **Grupo Rino E.I.R.L.**\n\n' +
+        'Puedo orientarte sobre compatibilidad de repuestos para automóviles y motocicletas, lubricantes con certificación API/JASO, sistema de frenos, baterías y el estado logístico de tus pedidos en Huánuco.\n\n' +
+        '*Nota:* El servicio está restringido estrictamente al catálogo y consultas automotrices de Grupo Rino.\n\n' +
+        '¿En qué pieza o especificación técnica puedo ayudarte?',
       time: getCurrentTime(),
     };
     setMessages([greeting]);
@@ -64,7 +65,7 @@ export default function AIChatView({ initialPrompt, onClearInitialPrompt }) {
 
   function getCurrentTime() {
     const d = new Date();
-    return `${d.getHours().toString().padLeft ? d.getHours().toString().padStart(2, '0') : d.getHours()}:${d.getMinutes().toString().padStart(2, '0')}`;
+    return `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
   }
 
   const handleSendMessage = async (customText) => {
@@ -96,7 +97,7 @@ export default function AIChatView({ initialPrompt, onClearInitialPrompt }) {
       const errorMessage = {
         id: `err_${Date.now()}`,
         role: 'bot',
-        content: `⚠️ Disculpa, ocurrió un error temporal al procesar tu consulta: ${err.message}`,
+        content: `No se pudo procesar la consulta en este momento: ${err.message}`,
         time: getCurrentTime(),
         isError: true,
       };
@@ -113,8 +114,8 @@ export default function AIChatView({ initialPrompt, onClearInitialPrompt }) {
       id: 'msg_welcome',
       role: 'bot',
       content:
-        '¡Conversación reiniciada! Soy **RinoBot**, tu asistente automotriz de **Grupo Rino E.I.R.L.** 🚗🏍️\n\n' +
-        '¿Sobre qué repuesto, lubricante o consulta de la app deseas orientación?',
+        'Conversación reiniciada. Soy **RinoBot**, asistente técnico de **Grupo Rino E.I.R.L.**\n\n' +
+        '¿Sobre qué repuesto, lubricante o consulta automotriz deseas orientación?',
       time: getCurrentTime(),
     };
     setMessages([greeting]);
@@ -143,62 +144,63 @@ export default function AIChatView({ initialPrompt, onClearInitialPrompt }) {
   };
 
   const renderInlineStyles = (str) => {
-    // Negrita **texto**
-    const parts = str.split(/(\*\*.*?\*\*)/g);
-    return parts.map((part, i) => {
-      if (part.startsWith('**') && part.endsWith('**')) {
-        return <strong key={i}>{part.slice(2, -2)}</strong>;
-      }
-      // Cursiva *texto*
-      if (part.startsWith('*') && part.endsWith('*')) {
-        return <em key={i}>{part.slice(1, -1)}</em>;
-      }
-      return part;
-    });
-  };
+    const parts = [];
+    const regex = /(\*\*.*?\*\*|\*.*?\*)/g;
+    let lastIndex = 0;
+    let match;
 
-  const { apiKey } = getDifyConfig();
-  const isCloudConnected = apiKey && apiKey.trim().length > 0;
+    while ((match = regex.exec(str)) !== null) {
+      if (match.index > lastIndex) {
+        parts.push(str.substring(lastIndex, match.index));
+      }
+      const token = match[0];
+      if (token.startsWith('**') && token.endsWith('**')) {
+        parts.push(<strong key={match.index}>{token.slice(2, -2)}</strong>);
+      } else if (token.startsWith('*') && token.endsWith('*')) {
+        parts.push(<em key={match.index}>{token.slice(1, -1)}</em>);
+      }
+      lastIndex = regex.lastIndex;
+    }
+    if (lastIndex < str.length) {
+      parts.push(str.substring(lastIndex));
+    }
+    return parts.length > 0 ? parts : str;
+  };
 
   return (
     <div className="chat-view-container animate-fade-in">
       {/* Chat Header Bar */}
-      <div className="chat-header-bar glass-panel">
+      <div className="chat-header-bar">
         <div className="chat-bot-info">
           <div className="bot-avatar-glow">
-            <Bot size={22} color="#3B82F6" />
+            <img src={rhinoLogo} alt="RinoBot" />
           </div>
           <div>
             <div className="bot-header-name">
-              <span>RinoBot</span>
-              <span className="bot-subtag">Asesor IA Especializado</span>
+              <span>RinoBot IA</span>
+              <span className="bot-subtag">Asesor Automotriz</span>
             </div>
             <div className="bot-status-row">
               <span className="pulse-dot"></span>
-              <span className="status-label">
-                {isCloudConnected ? 'Dify Cloud Conectado' : 'Motor Automotriz Local Rino'}
-              </span>
+              <span>Motor Inteligente Activo</span>
             </div>
           </div>
         </div>
 
-        <div className="chat-header-actions">
-          <button
-            className="chat-action-btn"
-            onClick={handleResetChat}
-            title="Reiniciar conversación"
-          >
-            <RefreshCw size={15} />
-            <span>Nueva Consulta</span>
-          </button>
-        </div>
+        <button
+          className="chat-action-btn"
+          onClick={handleResetChat}
+          title="Reiniciar chat"
+        >
+          <RefreshCw size={13} />
+          <span>Reiniciar</span>
+        </button>
       </div>
 
-      {/* Guardrail Info Banner */}
+      {/* Guardrail Policy Info */}
       <div className="guardrail-banner">
-        <ShieldAlert size={16} color="#F59E0B" />
         <span>
-          <strong>Alcance Especializado:</strong> RinoBot solo responderá preguntas relacionadas con la aplicación de Grupo Rino, repuestos automotrices, motos, pedidos y soporte técnico en Huánuco.
+          Asistente especializado de Grupo Rino E.I.R.L. Consultas limitadas a repuestos, catálogo, especificaciones y seguimiento logístico.
         </span>
       </div>
 
@@ -209,69 +211,79 @@ export default function AIChatView({ initialPrompt, onClearInitialPrompt }) {
             key={msg.id}
             className={`message-row ${msg.role === 'user' ? 'message-row-user' : 'message-row-bot'}`}
           >
-            {msg.role === 'bot' && (
-              <div className={`message-avatar ${msg.isError ? 'avatar-error' : 'avatar-bot'}`}>
-                {msg.isError ? <AlertCircle size={16} /> : <Bot size={16} />}
-              </div>
-            )}
-
-            <div className={`message-bubble ${msg.role === 'user' ? 'bubble-user' : 'bubble-bot'} ${msg.isError ? 'bubble-error' : ''}`}>
-              <div className="message-content">
-                {formatMarkdownText(msg.content)}
-              </div>
-              <div className="message-time">{msg.time}</div>
+            <div
+              className={`message-avatar ${
+                msg.role === 'user'
+                  ? 'avatar-user'
+                  : msg.isError
+                  ? 'avatar-error'
+                  : 'avatar-bot'
+              }`}
+            >
+              {msg.role === 'user' ? (
+                <User size={15} />
+              ) : msg.isError ? (
+                <AlertCircle size={15} />
+              ) : (
+                <img src={rhinoLogo} alt="RinoBot" />
+              )}
             </div>
 
-            {msg.role === 'user' && (
-              <div className="message-avatar avatar-user">
-                <User size={16} />
-              </div>
-            )}
+            <div
+              className={`message-bubble ${
+                msg.role === 'user'
+                  ? 'bubble-user'
+                  : msg.isError
+                  ? 'bubble-error'
+                  : 'bubble-bot'
+              }`}
+            >
+              <div className="message-text">{formatMarkdownText(msg.content)}</div>
+              <div className="message-time">{msg.time}</div>
+            </div>
           </div>
         ))}
 
         {isLoading && (
           <div className="message-row message-row-bot">
             <div className="message-avatar avatar-bot">
-              <Bot size={16} />
+              <img src={rhinoLogo} alt="RinoBot" />
             </div>
-            <div className="message-bubble bubble-bot typing-bubble">
+            <div className="message-bubble bubble-bot">
               <div className="typing-dots">
                 <span></span>
                 <span></span>
                 <span></span>
+                <span className="typing-text">Analizando consulta técnica...</span>
               </div>
-              <span className="typing-text">RinoBot está evaluando la consulta...</span>
             </div>
           </div>
         )}
-
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Quick Prompts Chips */}
+      {/* Suggested Quick Prompts */}
       <div className="quick-prompts-wrapper">
         <div className="quick-prompts-title">
-          <Sparkles size={12} color="#3B82F6" />
-          <span>Preguntas Frecuentes Sugeridas:</span>
+          <span>Consultas sugeridas:</span>
         </div>
         <div className="quick-prompts-scroll">
-          {quickPrompts.map((prompt, idx) => (
+          {quickPrompts.map((q, idx) => (
             <button
               key={idx}
               className="prompt-chip"
-              onClick={() => handleSendMessage(prompt)}
+              onClick={() => handleSendMessage(q)}
               disabled={isLoading}
             >
-              {prompt}
+              {q}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Message Input Form */}
+      {/* Chat Input Bar */}
       <form
-        className="chat-input-bar glass-panel"
+        className="chat-input-bar"
         onSubmit={(e) => {
           e.preventDefault();
           handleSendMessage();
@@ -280,7 +292,7 @@ export default function AIChatView({ initialPrompt, onClearInitialPrompt }) {
         <input
           type="text"
           className="chat-input-field"
-          placeholder="Escribe tu consulta sobre repuestos para tu vehículo..."
+          placeholder="Escribe tu consulta sobre repuestos, aceites o piezas para tu vehículo..."
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
           disabled={isLoading}
@@ -288,10 +300,10 @@ export default function AIChatView({ initialPrompt, onClearInitialPrompt }) {
         <button
           type="submit"
           className="chat-send-btn"
-          disabled={isLoading || !inputText.trim()}
+          disabled={!inputText.trim() || isLoading}
           title="Enviar consulta"
         >
-          <Send size={18} />
+          <Send size={15} />
         </button>
       </form>
     </div>
